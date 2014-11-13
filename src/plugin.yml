@@ -1,0 +1,8 @@
+name: ShortCommands
+version: 1.0
+author: ShortCircuit908
+website: http://dev.bukkit.org/bukkit-plugins/ShortCommands/
+main: com.shortcircuit.shortcommands.ShortCommands
+commands:
+  cmd-echo:
+    description: Dummy command
