@@ -1,8 +1,12 @@
 name: ShortCommands
-version: 1.0
+version: 1.1.0
 author: ShortCircuit908
 website: http://dev.bukkit.org/bukkit-plugins/ShortCommands/
 main: com.shortcircuit.shortcommands.ShortCommands
 commands:
   cmd-echo:
     description: Dummy command
+    usage: This command is for internal usage only
+  cmd-run:
+    description: Wrapper for command blocks
+    usage: This command is for internal usage only

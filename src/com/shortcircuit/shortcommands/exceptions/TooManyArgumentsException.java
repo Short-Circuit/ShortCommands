@@ -5,5 +5,5 @@ package com.shortcircuit.shortcommands.exceptions;
  * 
  */
 public class TooManyArgumentsException extends Exception {
-    private static final long serialVersionUID = -3684596901032869405L;
+	private static final long serialVersionUID = -3684596901032869405L;
 }

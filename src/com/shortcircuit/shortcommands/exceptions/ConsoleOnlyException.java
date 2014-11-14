@@ -5,5 +5,5 @@ package com.shortcircuit.shortcommands.exceptions;
  * 
  */
 public class ConsoleOnlyException extends Exception{
-    private static final long serialVersionUID = 1803155064915494679L;
+	private static final long serialVersionUID = 1803155064915494679L;
 }
