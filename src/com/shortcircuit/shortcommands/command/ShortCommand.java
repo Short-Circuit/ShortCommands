@@ -1,5 +1,7 @@
 package com.shortcircuit.shortcommands.command;
 
+import org.bukkit.plugin.Plugin;
+
 import com.shortcircuit.shortcommands.exceptions.BlockOnlyException;
 import com.shortcircuit.shortcommands.exceptions.ConsoleOnlyException;
 import com.shortcircuit.shortcommands.exceptions.InvalidArgumentException;
@@ -13,6 +15,21 @@ import com.shortcircuit.shortcommands.exceptions.TooManyArgumentsException;
  * 
  */
 public abstract class ShortCommand {
+	private final String owning_plugin;
+	public ShortCommand(String owning_plugin) {
+		this.owning_plugin = owning_plugin;
+	}
+	public ShortCommand(Plugin owning_plugin) {
+		this.owning_plugin = owning_plugin.getName();
+	}
+	/**
+	 * Gets the name of the plugin that registered the command
+	 * 
+	 * @return The name of the owning plugin
+	 */
+	public String getOwningPlugin() {
+		return owning_plugin;
+	}
 	/**
 	 * Gets the type of command
 	 *

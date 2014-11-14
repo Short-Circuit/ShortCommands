@@ -11,6 +11,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import com.shortcircuit.shortcommands.exceptions.BlockOnlyException;
+import com.shortcircuit.shortcommands.exceptions.CommandExistsException;
 import com.shortcircuit.shortcommands.exceptions.ConsoleOnlyException;
 import com.shortcircuit.shortcommands.exceptions.InvalidArgumentException;
 import com.shortcircuit.shortcommands.exceptions.NoPermissionException;
@@ -30,10 +31,28 @@ public class ShortCommandHandler<T extends ShortCommand>{
 	 * @param command The command to register
 	 * @see ShortCommand
 	 */
-	public void registerCommand(T command) {
+	public void registerCommand(T command) throws CommandExistsException{
+		List<String> conflicting_commands = new ArrayList<String>();
+		for(String name : command.getCommandNames()) {
+			if(hasCommand(name)) {
+				conflicting_commands.add(name);
+			}
+		}
+		if(conflicting_commands.size() > 0) {
+			String message = "";
+			for(String conflict : conflicting_commands) {
+				message += ", " + getCommand(conflict).getOwningPlugin() + ":" + conflict;
+			}
+			message = message.replaceFirst(", ", "");
+			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[ShortCommands] Unable to register "
+					+ "command: " + command.getOwningPlugin() + ":" + command.getCommandNames()[0]);
+			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[ShortCommands] The command conflicts "
+					+ "with the following commands: " + message);
+			throw new CommandExistsException(conflicting_commands.toArray(new String[] {}));
+		}
 		command_list.add(command);
 		Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + "[ShortCommands] Registered command: "
-				+ command.getCommandNames()[0]);
+				+ command.getOwningPlugin() + ":" + command.getCommandNames()[0]);
 	}
 	/**
 	 * Gets a list of all registered ShortCommands
@@ -142,11 +161,11 @@ public class ShortCommandHandler<T extends ShortCommand>{
 	public T unregisterCommand(T command) {
 		if(command_list.remove(command)) {
 			Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + "[ShortCommands] Unregistered command: "
-					+ command.getCommandNames()[0]);
+					+ command.getOwningPlugin() + ":" + command.getCommandNames()[0]);
 			return command;
 		}
 		Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[ShortCommands] Could not unregister command: "
-				+ command.getCommandNames()[0]);
+				+ command.getOwningPlugin() + ":" + command.getCommandNames()[0]);
 		return null;
 	}
 	/**
@@ -163,5 +182,20 @@ public class ShortCommandHandler<T extends ShortCommand>{
 			}
 		}
 		return false;
+	}
+	/**
+	 * Gets a ShortCommand by its name
+	 * @param command_name One of the names of the ShortCommand
+	 * @see ShortCommand
+	 */
+	public ShortCommand getCommand(String command_name) {
+		for(ShortCommand command : command_list) {
+			for(String name : command.getCommandNames()) {
+				if(name.equalsIgnoreCase(command_name)) {
+					return command;
+				}
+			}
+		}
+		return null;
 	}
 }
