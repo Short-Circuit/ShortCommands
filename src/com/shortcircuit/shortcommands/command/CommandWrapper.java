@@ -3,9 +3,10 @@ package com.shortcircuit.shortcommands.command;
 import org.bukkit.command.CommandSender;
 
 /**
- * @author ShortCircuit908
  * This class is strictly for internal command handling, and should not be used under any
  * circumstances
+ * 
+ * @author ShortCircuit908
  */
 public class CommandWrapper {
 	private final CommandSender command_sender;
@@ -39,6 +40,14 @@ public class CommandWrapper {
 	 */
 	public String[] getArgs() {
 		return args;
+	}
+	/**
+	 * Gets the argument at the specified index
+	 *
+	 * @return The argument at the specified index
+	 */
+	public String getArg(int index) {
+		return args[index];
 	}
 	@Override
 	public String toString() {

@@ -16,6 +16,7 @@ import com.shortcircuit.shortcommands.exceptions.TooManyArgumentsException;
  */
 public abstract class ShortCommand {
 	private final String owning_plugin;
+	private boolean enabled = true;
 	public ShortCommand(String owning_plugin) {
 		this.owning_plugin = owning_plugin;
 	}
@@ -59,6 +60,39 @@ public abstract class ShortCommand {
 	 */
 	public abstract String[] getHelp();
 	/**
+	 * Gets whether or not the command can be disabled
+	 * <p>
+	 * For most commands, this should return true. However, if your command provides core functionality,
+	 * you may wish to have your command not be disabled.
+	 * 
+	 * @return Whether or not the command can be disabled
+	 */
+	public abstract boolean canBeDisabled();
+	/**
+	 * Gets whether or not the command is enabled
+	 * <p>
+	 * When a command is disabled, any calls to the command will be entirely ignored, and will be passed
+	 * along to Bukkit's default command handling. The command itself is not unregistered, to prevent name
+	 * conflicts should another plugin attempt to register a command with a matching name.
+	 * 
+	 * @return Whether or not the command is enabled
+	 */
+	public boolean isEnabled() {
+		return enabled;
+	}
+	/**
+	 * Sets whether or not the command is enabled
+	 * <p>
+	 * When a command is disabled, any calls to the command will be entirely ignored, and will be passed
+	 * along to Bukkit's default command handling. The command itself is not unregistered, to prevent name
+	 * conflicts should another plugin attempt to register a command with a matching name.
+	 * 
+	 * @param enabled The enabled state of the command
+	 */
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+	/**
 	 * Runs the command
 	 * <p>
 	 * This method is called whenever the command is run. All elements of the return value are sent
@@ -69,6 +103,7 @@ public abstract class ShortCommand {
 	 * PlayerOnlyException, ConsoleOnlyException,
 	 * BlockOnlyException
 	 *
+	 * @param command The CommandWrapper associated with a given command
 	 * @return An array containing user feedback
 	 */
 	public abstract String[] exec(CommandWrapper command) throws

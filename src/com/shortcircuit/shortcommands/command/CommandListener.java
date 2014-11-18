@@ -13,10 +13,11 @@ import org.bukkit.event.server.ServerCommandEvent;
 
 import com.shortcircuit.shortcommands.ShortCommands;
 
-/**
- * @author ShortCircuit908
+/** 
  * This class is strictly for internal command handling, and should not be used under any
  * circumstances
+ * 
+ * @author ShortCircuit908
  */
 public class CommandListener implements Listener{
 	private ShortCommands plugin;
@@ -32,8 +33,7 @@ public class CommandListener implements Listener{
 		boolean success = plugin.getCommandHandler().exec(new CommandWrapper(event.getPlayer(),
 				command.split(" ")[0], (String[])ArrayUtils.remove(command.split(" "), 0)));
 		if(success) {
-			event.setCancelled(true);
-			event.setMessage("cmd-echo");
+			event.setMessage("/cmd-echo");
 		}
 	}
 	@EventHandler(priority = EventPriority.HIGHEST)
