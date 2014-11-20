@@ -24,8 +24,12 @@ import com.shortcircuit.shortcommands.commands.StatusCommand;
  */
 public class ShortCommands extends JavaPlugin{
 	private ShortCommandHandler<ShortCommand> command_handler = new ShortCommandHandler<ShortCommand>();
+	private JSONConfig config;
+	private boolean save_disabled_commands = true;
 	public void onEnable() {
 		getLogger().info("ShortCommands by ShortCircuit908");
+		config = new JSONConfig(this);
+		config.loadConfig();
 		getServer().getPluginManager().registerEvents(new CommandListener(this), this);
 		Set<ShortCommand> unregistered_commands = command_handler.registerCommands(
 				new DisableCommand(this),
@@ -40,6 +44,9 @@ public class ShortCommands extends JavaPlugin{
 	}
 	public void onDisable() {
 		HandlerList.unregisterAll(this);
+		if(save_disabled_commands) {
+			config.saveConfig();
+		}
 		getLogger().info("ShortCommands disabled");
 	}
 	public boolean onCommand(CommandSender command_sender, Command command, String command_label, String[] args){
@@ -82,5 +89,16 @@ public class ShortCommands extends JavaPlugin{
 	 */
 	public static ShortCommands getInstance() {
 		return (ShortCommands)(Bukkit.getPluginManager().getPlugin("ShortCommands"));
+	}
+	/**
+	 * Sets whether or not the disabled command list should be saved
+	 * <p>
+	 * This method is strictly for internal command handling, and should not be used under any
+	 * circumstances
+	 * 
+	 * @param save Whether or not to save the list of disabled commands to the config file
+	 */
+	protected void setSaveDisabledCommands(boolean save) {
+		this.save_disabled_commands = save;
 	}
 }

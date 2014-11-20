@@ -30,6 +30,7 @@ import com.shortcircuit.shortcommands.exceptions.TooManyArgumentsException;
  */
 public class ShortCommandHandler<T extends ShortCommand>{
 	private final Set<T> command_list = new HashSet<T>();
+	private final Set<String> disabled_commands = new HashSet<String>();
 	/**
 	 * Registers the provided ShortCommand
 	 * @param command The command to register
@@ -42,25 +43,28 @@ public class ShortCommandHandler<T extends ShortCommand>{
 				conflicting_commands.add(name);
 			}
 		}
+		String command_name = command.getOwningPlugin() + ":" + command.getClass().getSimpleName();
 		if(conflicting_commands.size() > 0) {
 			String message = "";
 			for(String conflict : conflicting_commands) {
-				message += ", " + getCommand(conflict).getOwningPlugin() + ":"
-						+ getCommand(conflict).getClass().getSimpleName() + ":" + conflict;
+				message += ", " + command_name + ":" + conflict;
 			}
 			message = message.replaceFirst(", ", "");
 			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[ShortCommands] Unable to register "
-					+ "command: " + command.getOwningPlugin() + ":" + command.getClass().getSimpleName());
+					+ "command: " + command_name);
 			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[ShortCommands] The command conflicts "
 					+ "with the following commands: " + message);
 			throw new CommandExistsException(conflicting_commands.toArray(new String[] {}));
 		}
 		command_list.add(command);
 		for(String name : command.getCommandNames()) {
-			Bukkit.getServer().getHelpMap().addTopic(new ShortHelpTopic(name, command));
+			Bukkit.getServer().getHelpMap().addTopic(new ShortHelpTopic("/"+ name, command));
+		}
+		if(disabled_commands.contains(command_name) && command.canBeDisabled()) {
+			command.setEnabled(false);
 		}
 		Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + "[ShortCommands] Registered command: "
-				+ command.getOwningPlugin() + ":" + command.getClass().getSimpleName());
+				+ command_name);
 	}
 	/**
 	 * Attempts to register a collection of ShortCommands
@@ -282,6 +286,9 @@ public class ShortCommandHandler<T extends ShortCommand>{
 	 * @return Whether or not the command was successfully disabled
 	 */
 	public boolean disableCommand(T command) throws PersistentCommandException{
+		if(command == null) {
+			return false;
+		}
 		if(!command.canBeDisabled()) {
 			throw new PersistentCommandException();
 		}
@@ -341,6 +348,9 @@ public class ShortCommandHandler<T extends ShortCommand>{
 	 * @return Whether or not the command was successfully enabled
 	 */
 	public boolean enableCommand(T command){
+		if(command == null) {
+			return false;
+		}
 		if(command_list.contains(command)) {
 			command.setEnabled(true);
 			return true;
@@ -380,5 +390,16 @@ public class ShortCommandHandler<T extends ShortCommand>{
 		}
 		command.setEnabled(true);
 		return true;
+	}
+	/**
+	 * Adds a command to be disabled when registered
+	 * <p>
+	 * This method is strictly for internal command handling, and should not be used under any
+	 * circumstances
+	 * 
+	 * @param command_name The given name of the command to be disabled
+	 */
+	public void addInitialDisabledCommand(String command_name) {
+		disabled_commands.add(command_name);
 	}
 }

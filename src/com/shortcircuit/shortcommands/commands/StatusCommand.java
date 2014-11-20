@@ -43,8 +43,9 @@ public class StatusCommand extends ShortCommand{
 	
 	@Override
 	public String[] getHelp() {
-		return new String[] {ChatColor.AQUA + "Display a list of registered ShortCommands"
-				+ ChatColor.AQUA + "/${command}"};
+		return new String[] {
+				ChatColor.AQUA + "Display a list of registered ShortCommands",
+				ChatColor.AQUA + "/${command} [pluginName]"};
 	}
 	
 	@Override
@@ -57,10 +58,16 @@ public class StatusCommand extends ShortCommand{
 			throws TooFewArgumentsException, TooManyArgumentsException,
 			InvalidArgumentException, NoPermissionException,
 			PlayerOnlyException, ConsoleOnlyException, BlockOnlyException {
+		String plugin_name = "";
+		if(command.getArgs().length > 0) {
+			plugin_name = command.getArg(0).toLowerCase();
+		}
 		String message = "";
 		for(ShortCommand short_command : command_handler.getCommands()) {
-			message += ", " + (short_command.isEnabled() ? ChatColor.GREEN : ChatColor.RED)
-					+ short_command.getOwningPlugin() + ":" + short_command.getClass().getSimpleName();
+			if(short_command.getOwningPlugin().toLowerCase().contains(plugin_name)) {
+				message += ChatColor.RESET + ", " + (short_command.isEnabled() ? ChatColor.GREEN : ChatColor.RED)
+						+ short_command.getOwningPlugin() + ":" + short_command.getClass().getSimpleName();
+			}
 		}
 		return new String[] {message.replaceFirst(",", "")};
 	}

@@ -10,7 +10,7 @@ import org.bukkit.help.HelpTopic;
  * @author ShortCircuit908
  */
 public class ShortHelpTopic extends HelpTopic{
-	public ShortHelpTopic(String command_name, ShortCommand command) {
+	protected ShortHelpTopic(String command_name, ShortCommand command) {
 		amendedPermission = command.getPermissions();
 		name = command_name;
 		shortText = command.getHelp()[0];

@@ -55,6 +55,11 @@ public abstract class ShortCommand {
 	 * Gets the help topics of the command
 	 * <p>
 	 * Each element of the array is one line of the help message
+	 * <br>
+	 * The very first line should be a short description of the command. Following the first line can be
+	 * any number of lines containing more information, including a more detailed description, proper
+	 * usage, etc. If included, the ${command} syntax will be replaced with the command name that was used
+	 * in executing the command.
 	 *
 	 * @return An array containing the help messages of the command
 	 */

@@ -43,7 +43,8 @@ public class EnableCommand extends ShortCommand{
 	
 	@Override
 	public String[] getHelp() {
-		return new String[] {ChatColor.AQUA + "Enable a ShortCommand",
+		return new String[] {
+				ChatColor.AQUA + "Enable a ShortCommand",
 				ChatColor.AQUA + "Enter commands to be enabled in a comma-separated list",
 				ChatColor.AQUA + "/${command} <commands...>",
 				ChatColor.AQUA + "Ex: /${command} command1,command2,command3"};
@@ -72,6 +73,10 @@ public class EnableCommand extends ShortCommand{
 			if(success) {
 				command.getSender().sendMessage(ChatColor.AQUA + "[ShortCommands] Enabled command: "
 						+ short_command.getOwningPlugin() + ":" + short_command.getClass().getSimpleName());
+			}
+			else {
+				command.getSender().sendMessage(ChatColor.RED + "[ShortCommands] Could not find command "
+						+ "with name: " + command_name);
 			}
 		}
 		return new String[] {};

@@ -36,7 +36,6 @@ public class DisableCommand extends ShortCommand{
 	public String[] getCommandNames() {
 		return new String[] {"cmd-disable"};
 	}
-	
 	@Override
 	public String getPermissions() {
 		return "*";
@@ -69,14 +68,20 @@ public class DisableCommand extends ShortCommand{
 		String[] commands = command.getArg(0).split(",");
 		for(String command_name : commands) {
 			ShortCommand short_command = command_handler.getCommand(command_name);
-			try {
-				command_handler.disableCommand(short_command);
-				command.getSender().sendMessage(ChatColor.AQUA + "[ShortCommands] Disabled command: "
-						+ short_command.getOwningPlugin() + ":" + short_command.getClass().getSimpleName());
+			if(short_command == null) {
+				command.getSender().sendMessage(ChatColor.RED + "[ShortCommands] Could not find command "
+						+ "with name: " + command_name);
 			}
-			catch(PersistentCommandException e) {
-				command.getSender().sendMessage(ChatColor.RED + "[ShortCommands] Could not disable command: "
-						+ short_command.getOwningPlugin() + ":" + short_command.getClass().getSimpleName());
+			else {
+				try {
+					command_handler.disableCommand(short_command);
+					command.getSender().sendMessage(ChatColor.AQUA + "[ShortCommands] Disabled command: "
+							+ short_command.getOwningPlugin() + ":" + short_command.getClass().getSimpleName());
+				}
+				catch(PersistentCommandException e) {
+					command.getSender().sendMessage(ChatColor.RED + "[ShortCommands] Could not disable command: "
+							+ short_command.getOwningPlugin() + ":" + short_command.getClass().getSimpleName());
+				}
 			}
 		}
 		return new String[] {};
