@@ -16,6 +16,7 @@ import com.shortcircuit.shortcommands.command.ShortCommand;
 import com.shortcircuit.shortcommands.command.ShortCommandHandler;
 import com.shortcircuit.shortcommands.commands.DisableCommand;
 import com.shortcircuit.shortcommands.commands.EnableCommand;
+import com.shortcircuit.shortcommands.commands.InfoCommand;
 import com.shortcircuit.shortcommands.commands.StatusCommand;
 
 /**
@@ -34,11 +35,14 @@ public class ShortCommands extends JavaPlugin{
 		Set<ShortCommand> unregistered_commands = command_handler.registerCommands(
 				new DisableCommand(this),
 				new EnableCommand(this),
+				new InfoCommand(this),
 				new StatusCommand(this));
+		command_handler.registerHelpTopics(this);
 		if(unregistered_commands.size() > 0) {
 			getLogger().severe("Could not register core commands");
 			getLogger().severe("Disabling...");
 			setEnabled(false);
+			return;
 		}
 		getLogger().info("ShortCommands enabled");
 	}

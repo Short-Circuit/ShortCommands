@@ -68,9 +68,9 @@ public class EnableCommand extends ShortCommand{
 		}
 		String[] commands = command.getArg(0).split(",");
 		for(String command_name : commands) {
-			ShortCommand short_command = command_handler.getCommand(command_name);
-			boolean success = command_handler.enableCommand(short_command);
-			if(success) {
+			if(command_handler.hasCommand(command_name)) {
+				ShortCommand short_command = command_handler.getCommand(command_name);
+				command_handler.enableCommand(short_command);
 				command.getSender().sendMessage(ChatColor.AQUA + "[ShortCommands] Enabled command: "
 						+ short_command.getOwningPlugin() + ":" + short_command.getClass().getSimpleName());
 			}

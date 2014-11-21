@@ -11,6 +11,7 @@ import org.bukkit.block.CommandBlock;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 import com.google.common.collect.ImmutableSet;
 import com.shortcircuit.shortcommands.exceptions.BlockOnlyException;
@@ -57,9 +58,6 @@ public class ShortCommandHandler<T extends ShortCommand>{
 			throw new CommandExistsException(conflicting_commands.toArray(new String[] {}));
 		}
 		command_list.add(command);
-		for(String name : command.getCommandNames()) {
-			Bukkit.getServer().getHelpMap().addTopic(new ShortHelpTopic("/"+ name, command));
-		}
 		if(disabled_commands.contains(command_name) && command.canBeDisabled()) {
 			command.setEnabled(false);
 		}
@@ -116,6 +114,21 @@ public class ShortCommandHandler<T extends ShortCommand>{
 	 */
 	public Set<T> getCommands(){
 		return ImmutableSet.copyOf(command_list);
+	}
+	/**
+	 * Gets a list of registered ShortCommands belonging to a plugin
+	 * @param plugin The plugin that registered the commands
+	 * @return A set of registered ShortCommands beloning to a plugin
+	 * @see ShortCommand
+	 */
+	public Set<T> getCommands(Plugin plugin){
+		Set<T> commands = new HashSet<T>();
+		for(T command : command_list) {
+			if(command.getOwningPlugin().equals(plugin.getName())) {
+				commands.add(command);
+			}
+		}
+		return ImmutableSet.copyOf(commands);
 	}
 	/**
 	 * Attempts to find and execute a ShortCommand based on the provided CommandWrapper
@@ -232,12 +245,17 @@ public class ShortCommandHandler<T extends ShortCommand>{
 	}
 	/**
 	 * Check whether a ShortCommand exists
-	 * @param command_name One of the names of the ShortCommand
+	 * @param command_name One of the names of the ShortCommand, or the name in the format
+	 * "OwningPlugin:ClassName"
 	 * @return Whether or not the command exists
 	 * @see ShortCommand
 	 */
 	public boolean hasCommand(String command_name) {
-		for(ShortCommand command : command_list) {
+		for(T command : command_list) {
+			if(command_name.contains(":") && command_name.equalsIgnoreCase(command.getOwningPlugin()
+					+ ":" + command.getClass().getSimpleName())) {
+				return true;
+			}
 			for(String name : command.getCommandNames()) {
 				if(name.equalsIgnoreCase(command_name)) {
 					return true;
@@ -248,12 +266,17 @@ public class ShortCommandHandler<T extends ShortCommand>{
 	}
 	/**
 	 * Gets a ShortCommand by its name
-	 * @param command_name One of the names of the ShortCommand
+	 * @param command_name One of the names of the ShortCommand, or the name in the format
+	 * "OwningPlugin:ClassName"
 	 * @return The matching ShortCommand
 	 * @see ShortCommand
 	 */
 	public T getCommand(String command_name) {
 		for(T command : command_list) {
+			if(command_name.contains(":") && command_name.equalsIgnoreCase(command.getOwningPlugin()
+					+ ":" + command.getClass().getSimpleName())) {
+				return command;
+			}
 			for(String name : command.getCommandNames()) {
 				if(name.equalsIgnoreCase(command_name)) {
 					return command;
@@ -401,5 +424,25 @@ public class ShortCommandHandler<T extends ShortCommand>{
 	 */
 	public void addInitialDisabledCommand(String command_name) {
 		disabled_commands.add(command_name);
+	}
+	/**
+	 * Registers help topics for a plugin and all its commands
+	 * <p>
+	 * This method should be called in a plugin's onEnable() method only AFTER all commands have been
+	 * registered. Help topics will only be generated for commands that have already been registered at
+	 * the time this method is called.
+	 * 
+	 * @param plugin The plugin to register help topics for
+	 */
+	@SuppressWarnings("unchecked")
+	public void registerHelpTopics(Plugin plugin) {
+		Set<T> commands = getCommands(plugin);
+		for(T command : commands) {
+			for(String name : command.getCommandNames()) {
+				Bukkit.getServer().getHelpMap().addTopic(new ShortHelpTopic(name, command));
+			}
+		}
+		Bukkit.getServer().getHelpMap().addTopic(new ShortHelpTopic(plugin.getName(),
+				(Set<ShortCommand>)commands));
 	}
 }

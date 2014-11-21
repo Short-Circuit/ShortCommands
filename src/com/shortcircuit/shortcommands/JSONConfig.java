@@ -34,7 +34,12 @@ public class JSONConfig {
 		config_file = new File(plugin.getDataFolder() + "/disabled_commands.json");
 		try {
 			plugin.getDataFolder().mkdirs();
-			config_file.createNewFile();
+			if(config_file.createNewFile()) {
+				FileWriter writer = new FileWriter(config_file);
+				writer.append("[]");
+				writer.flush();
+				writer.close();
+			}
 		}
 		catch(IOException e) {
 			e.printStackTrace();

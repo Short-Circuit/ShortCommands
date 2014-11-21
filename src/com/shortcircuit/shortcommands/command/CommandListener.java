@@ -26,7 +26,8 @@ public class CommandListener implements Listener{
 	}
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onCommand(final PlayerCommandPreprocessEvent event) {
-		if(event.isCancelled()) {
+		if(event.isCancelled() || event.getMessage().split(" ")[0].equalsIgnoreCase("/stop")
+				|| event.getMessage().split(" ")[0].equalsIgnoreCase("/reload")) {
 			return;
 		}
 		String command = event.getMessage().replaceFirst("/", "");
@@ -38,6 +39,10 @@ public class CommandListener implements Listener{
 	}
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onCommand(final ServerCommandEvent event) {
+		if(event.getCommand().split(" ")[0].equalsIgnoreCase("stop")
+				|| event.getCommand().split(" ")[0].equalsIgnoreCase("reload")) {
+			return;
+		}
 		boolean success = plugin.getCommandHandler().exec(new CommandWrapper(event.getSender(),
 				event.getCommand().split(" ")[0], (String[])ArrayUtils.remove(event.getCommand().split(" "), 0)));
 		if(success) {

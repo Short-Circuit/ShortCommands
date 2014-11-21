@@ -1,5 +1,7 @@
 package com.shortcircuit.shortcommands.command;
 
+import org.bukkit.ChatColor;
+
 /**
  * @author ShortCircuit908
  * 
@@ -17,14 +19,14 @@ public enum CommandType {
 	 * <br>  /warp
 	 * <br>  /heal
 	 */
-	PLAYER(0),
+	PLAYER(ChatColor.LIGHT_PURPLE),
 	/**
 	 * Represents a console-only command
 	 * <p>
 	 * Console-only commands may only be run from the server console. Examples of console-only commands
 	 * include commands which are solely meant for debugging purposes or for obtaining server information.
 	 */
-	CONSOLE(1),
+	CONSOLE(ChatColor.AQUA),
 	/**
 	 * Represents a block-only command
 	 * <p>
@@ -34,7 +36,7 @@ public enum CommandType {
 	 * <br>Ex:
 	 * <br>  /testfor
 	 */
-	BLOCK(2),
+	BLOCK(ChatColor.YELLOW),
 	/**
 	 * Represents a universal command
 	 * <p>
@@ -48,15 +50,19 @@ public enum CommandType {
 	 * <br>  /say
 	 * <br>  /broadcast
 	 */
-	ANY(3);
+	ANY(ChatColor.BLUE);
 	
-	private final int ordinal;
+	private final ChatColor color;
 	
-	private CommandType(int ordinal) {
-		this.ordinal = ordinal;
+	private CommandType(ChatColor color) {
+		this.color = color;
 	}
 	
-	public static int getOrdinal(CommandType type) {
-		return type.ordinal;
+	public static ChatColor getColor(CommandType type) {
+		return type.color;
+	}
+	
+	public String toString() {
+		return color + name();
 	}
 }

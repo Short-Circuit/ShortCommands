@@ -1,5 +1,6 @@
 package com.shortcircuit.shortcommands.commands;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.ChatColor;
 
 import com.shortcircuit.shortcommands.ShortCommands;
@@ -11,7 +12,6 @@ import com.shortcircuit.shortcommands.exceptions.BlockOnlyException;
 import com.shortcircuit.shortcommands.exceptions.ConsoleOnlyException;
 import com.shortcircuit.shortcommands.exceptions.InvalidArgumentException;
 import com.shortcircuit.shortcommands.exceptions.NoPermissionException;
-import com.shortcircuit.shortcommands.exceptions.PersistentCommandException;
 import com.shortcircuit.shortcommands.exceptions.PlayerOnlyException;
 import com.shortcircuit.shortcommands.exceptions.TooFewArgumentsException;
 import com.shortcircuit.shortcommands.exceptions.TooManyArgumentsException;
@@ -20,9 +20,9 @@ import com.shortcircuit.shortcommands.exceptions.TooManyArgumentsException;
  * @author ShortCircuit908
  * 
  */
-public class DisableCommand extends ShortCommand{
+public class InfoCommand extends ShortCommand{
 	private ShortCommandHandler<ShortCommand> command_handler;
-	public DisableCommand(ShortCommands owning_plugin) {
+	public InfoCommand(ShortCommands owning_plugin) {
 		super(owning_plugin);
 		this.command_handler = owning_plugin.getCommandHandler();
 	}
@@ -34,8 +34,9 @@ public class DisableCommand extends ShortCommand{
 	
 	@Override
 	public String[] getCommandNames() {
-		return new String[] {"cmd-disable"};
+		return new String[] {"cmd-info"};
 	}
+	
 	@Override
 	public String getPermissions() {
 		return "*";
@@ -43,10 +44,11 @@ public class DisableCommand extends ShortCommand{
 	
 	@Override
 	public String[] getHelp() {
-		return new String[] {ChatColor.AQUA + "Disable a ShortCommand",
-				ChatColor.AQUA + "Enter commands to be disabled in a comma-separated list",
-				ChatColor.AQUA + "/${command} <commands...>",
-				ChatColor.AQUA + "Ex: /${command} command1,command2,command3"};
+		return new String[] {
+				ChatColor.AQUA + "View a command's pertinent information",
+				ChatColor.AQUA + "Ender the command name as shown with /cmd-list",
+				ChatColor.AQUA + "/${command} <command>",
+				ChatColor.AQUA + "Ex: /${command} ShortCommands:InfoCommand"};
 	}
 	
 	@Override
@@ -62,29 +64,25 @@ public class DisableCommand extends ShortCommand{
 		if(command.getArgs().length < 1) {
 			throw new TooFewArgumentsException();
 		}
-		if(command.getArgs().length > 1) {
-			throw new TooManyArgumentsException();
+		if(command_handler.hasCommand(command.getArg(0))) {
+			ShortCommand short_command = command_handler.getCommand(command.getArg(0));
+			
+			return new String[] {ChatColor.GRAY + "Information for " + ChatColor.WHITE
+					+ short_command.getOwningPlugin() + ":" + short_command.getClass().getSimpleName()
+					+ ChatColor.GRAY + ":",
+					ChatColor.GOLD + "Type: " + ChatColor.WHITE + short_command.getCommandType(),
+					ChatColor.GOLD + "Required permissions: " + ChatColor.WHITE
+					+ short_command.getPermissions(),
+					ChatColor.GOLD + "Aliases: " + ChatColor.WHITE
+					+ ArrayUtils.toString(short_command.getCommandNames()),
+					ChatColor.GOLD + "Enabled: " + boolToString(short_command.isEnabled()),
+					ChatColor.GOLD + "Can be disabled: " + boolToString(short_command.canBeDisabled()),
+			};
 		}
-		String[] commands = command.getArg(0).split(",");
-		for(String command_name : commands) {
-			if(command_handler.hasCommand(command_name)) {
-			ShortCommand short_command = command_handler.getCommand(command_name);
-				try {
-					command_handler.disableCommand(short_command);
-					command.getSender().sendMessage(ChatColor.AQUA + "[ShortCommands] Disabled command: "
-							+ short_command.getOwningPlugin() + ":" + short_command.getClass().getSimpleName());
-				}
-				catch(PersistentCommandException e) {
-					command.getSender().sendMessage(ChatColor.RED + "[ShortCommands] Could not disable command: "
-							+ short_command.getOwningPlugin() + ":" + short_command.getClass().getSimpleName());
-				}
-			}
-			else {
-				command.getSender().sendMessage(ChatColor.RED + "[ShortCommands] Could not find command "
-						+ "with name: " + command_name);
-			}
-		}
-		return new String[] {};
+		return new String[] {ChatColor.RED + "[ShortCommands] Could not find command with name: "
+				+ command.getArg(0)};
 	}
-	
+	private String boolToString(boolean bool) {
+		return bool ? ChatColor.GREEN + "" + bool : ChatColor.RED + "" + bool;
+	}
 }
