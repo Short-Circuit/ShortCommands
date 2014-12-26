@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender;
  * @author ShortCircuit908
  */
 public class CommandWrapper {
-	private final CommandSender command_sender;
+	private CommandSender command_sender;
 	private final String command_label;
 	private final String[] args;
 	public CommandWrapper(CommandSender command_sender, String command_label, String[] args) {
