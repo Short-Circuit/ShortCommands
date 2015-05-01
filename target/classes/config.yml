@@ -1,0 +1,5 @@
+#Plugins whose commands should be handled by ShortCommands
+#Command functionality will remain unchanged
+#Include the item "*" to handle all plugin commands
+CommandOverrides:
+  - Bukkit
