@@ -2,16 +2,7 @@ package com.shortcircuit.shortcommands.command;
 
 import com.google.common.collect.ImmutableSet;
 import com.shortcircuit.shortcommands.command.bukkitwrapper.BukkitCommandWrapper;
-import com.shortcircuit.shortcommands.exceptions.BlockOnlyException;
-import com.shortcircuit.shortcommands.exceptions.CommandExistsException;
-import com.shortcircuit.shortcommands.exceptions.ConsoleOnlyException;
-import com.shortcircuit.shortcommands.exceptions.InvalidArgumentException;
-import com.shortcircuit.shortcommands.exceptions.NoPermissionException;
-import com.shortcircuit.shortcommands.exceptions.PersistentCommandException;
-import com.shortcircuit.shortcommands.exceptions.PlayerOnlyException;
-import com.shortcircuit.shortcommands.exceptions.TooFewArgumentsException;
-import com.shortcircuit.shortcommands.exceptions.TooManyArgumentsException;
-
+import com.shortcircuit.shortcommands.exceptions.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.block.CommandBlock;
@@ -19,7 +10,9 @@ import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.reflections.Reflections;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -29,9 +22,15 @@ import java.util.Set;
 /**
  * @author ShortCircuit908
  */
+@SuppressWarnings("unused")
 public final class ShortCommandHandler<T extends ShortCommand> {
 	private final Set<T> command_list = new HashSet<>();
 	private final Set<String> disabled_commands = new HashSet<>();
+	private final Class<T> command_type = (Class<T>)ShortCommand.class;
+
+	public ShortCommandHandler(){
+
+	}
 
 	/**
 	 * Registers the provided {@link com.shortcircuit.shortcommands.command.ShortCommand ShortCommand}
@@ -60,9 +59,9 @@ public final class ShortCommandHandler<T extends ShortCommand> {
 			}
 			message = message.replaceFirst(", ", "");
 			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[ShortCommands] Unable to register "
-					+ "command: " + command_name);
+			                                      + "command: " + command_name);
 			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[ShortCommands] The command conflicts "
-					+ "with the following commands: " + message);
+			                                      + "with the following commands: " + message);
 			throw new CommandExistsException(conflicting_commands.toArray(new String[]{}));
 		}
 		command_list.add(command);
@@ -70,12 +69,13 @@ public final class ShortCommandHandler<T extends ShortCommand> {
 			command.setEnabled(false);
 		}
 		Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + "[ShortCommands] Registered command: "
-				+ command_name);
+		                                      + command_name);
 	}
 
 	/**
 	 * Wrap a Bukkit command for handling by ShortCommands
 	 */
+	@SuppressWarnings("unchecked")
 	public void wrapPluginCommand(BukkitCommandWrapper wrapper) {
 		command_list.add((T) wrapper);
 	}
@@ -83,6 +83,7 @@ public final class ShortCommandHandler<T extends ShortCommand> {
 	/**
 	 * Allow a wrapped command to be handled by Bukkit
 	 */
+	@SuppressWarnings("SuspiciousMethodCalls")
 	public void unwrapPluginCommand(BukkitCommandWrapper wrapper) {
 		command_list.remove(wrapper);
 	}
@@ -126,6 +127,33 @@ public final class ShortCommandHandler<T extends ShortCommand> {
 		for (T command : commands) {
 			try {
 				registerCommand(command);
+			}
+			catch (CommandExistsException e) {
+				unregistered_commands.add(command);
+			}
+		}
+		return ImmutableSet.copyOf(unregistered_commands);
+	}
+
+	public Set<T> registerCommands(Plugin plugin, String package_name) {
+		Reflections reflections = new Reflections(package_name, plugin.getClass().getClassLoader());
+		Set<Class<? extends T>> command_classes = reflections.getSubTypesOf(command_type);
+		Set<T> unregistered_commands = new HashSet<>();
+		for (Class<? extends T> command_class : command_classes) {
+			T command = null;
+			try {
+				try {
+					Constructor<? extends T> constructor = command_class.getDeclaredConstructor(plugin.getClass());
+					command = constructor.newInstance(plugin);
+				}
+				catch (NoSuchMethodException e) {
+					Constructor<? extends T> constructor = command_class.getDeclaredConstructor();
+					command = constructor.newInstance();
+				}
+				registerCommand(command);
+			}
+			catch(ReflectiveOperationException e){
+				e.printStackTrace();
 			}
 			catch (CommandExistsException e) {
 				unregistered_commands.add(command);
@@ -204,28 +232,28 @@ public final class ShortCommandHandler<T extends ShortCommand> {
 							CommandBlock command_block = (CommandBlock) ((BlockCommandSender)
 									command.getSender()).getBlock().getState();
 							name = "CommandBlock at " + command_block.getX() + "," + command_block.getY()
-									+ "," + command_block.getZ();
+							       + "," + command_block.getZ();
 						}
 						Bukkit.getLogger().info(name + " issued ShortCommand: "
-								+ command);
+						                        + command);
 						success = true;
 						if (command_check.getCommandType().equals(CommandType.CONSOLE)
-								&& !(command.getSender() instanceof ConsoleCommandSender)) {
+						    && !(command.getSender() instanceof ConsoleCommandSender)) {
 							throw new ConsoleOnlyException();
 						}
 						if (command_check.getCommandType().equals(CommandType.PLAYER)
-								&& !(command.getSender() instanceof Player)) {
+						    && !(command.getSender() instanceof Player)) {
 							throw new PlayerOnlyException();
 						}
 						if (command_check.getCommandType().equals(CommandType.BLOCK)
-								&& !(command.getSender() instanceof BlockCommandSender)) {
+						    && !(command.getSender() instanceof BlockCommandSender)) {
 							throw new BlockOnlyException();
 						}
 
 						if (PermissionComparator.hasWildcardPermission(command.getSender(),
 								command_check.getPermissions())) {
 							if (command.getArgs().length > 0
-									&& command.getArgs()[0].equalsIgnoreCase("help")) {
+							    && command.getArgs()[0].equalsIgnoreCase("help")) {
 								for (String message : command_check.getHelp()) {
 									command.getSender().sendMessage(message.replace("${command}",
 											command.getCommandLabel()));
@@ -233,7 +261,7 @@ public final class ShortCommandHandler<T extends ShortCommand> {
 								break check_loop;
 							}
 							for (String message : command_check.exec(command)) {
-								command.getSender().sendMessage(message);
+								command.getSender().sendMessage(ChatColor.AQUA + message);
 							}
 							break check_loop;
 						}
@@ -265,12 +293,12 @@ public final class ShortCommandHandler<T extends ShortCommand> {
 		if (command_list.remove(command)) {
 			if (!(command instanceof BukkitCommandWrapper)) {
 				Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + "[ShortCommands] Unregistered command: "
-						+ command.getUniqueName());
+				                                      + command.getUniqueName());
 			}
 			return command;
 		}
 		Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[ShortCommands] Could not unregister command: "
-				+ command.getUniqueName());
+		                                      + command.getUniqueName());
 		return null;
 	}
 

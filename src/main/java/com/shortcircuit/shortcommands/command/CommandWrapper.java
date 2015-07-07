@@ -1,6 +1,9 @@
 package com.shortcircuit.shortcommands.command;
 
+import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
 
 /**
  * This class is strictly for internal command handling, and should not be used under any
@@ -8,12 +11,12 @@ import org.bukkit.command.CommandSender;
  *
  * @author ShortCircuit908
  */
-public final class CommandWrapper{
+public final class CommandWrapper {
 	private CommandSender command_sender;
 	private final String command_label;
 	private final String[] args;
 
-	public CommandWrapper(CommandSender command_sender, String command_label, String[] args){
+	public CommandWrapper(CommandSender command_sender, String command_label, String[] args) {
 		this.command_sender = command_sender;
 		this.command_label = command_label;
 		this.args = args;
@@ -24,8 +27,47 @@ public final class CommandWrapper{
 	 *
 	 * @return The sender of the command
 	 */
-	public CommandSender getSender(){
+	public CommandSender getSender() {
 		return command_sender;
+	}
+
+	/**
+	 * Gets the associated CommandSender as a Player
+	 *
+	 * @return The sender of the command
+	 */
+	public Player getPlayerSender() {
+		return (Player) command_sender;
+	}
+
+	/**
+	 * Gets the associated CommandSender as a ConsoleCommandSender
+	 *
+	 * @return The sender of the command
+	 */
+	public ConsoleCommandSender getConsoleSender() {
+		return (ConsoleCommandSender) command_sender;
+	}
+
+	/**
+	 * Gets the associated CommandSender as a BlockCommandSender
+	 *
+	 * @return The sender of the command
+	 */
+	public BlockCommandSender getBlockSender() {
+		return (BlockCommandSender) command_sender;
+	}
+
+	public boolean fromPlayer() {
+		return command_sender instanceof Player;
+	}
+
+	public boolean fromConsole() {
+		return command_sender instanceof ConsoleCommandSender;
+	}
+
+	public boolean fromBlock() {
+		return command_sender instanceof BlockCommandSender;
 	}
 
 	/**
@@ -33,7 +75,7 @@ public final class CommandWrapper{
 	 *
 	 * @return The name of the command
 	 */
-	public String getCommandLabel(){
+	public String getCommandLabel() {
 		return command_label;
 	}
 
@@ -42,7 +84,7 @@ public final class CommandWrapper{
 	 *
 	 * @return The arguments of the command
 	 */
-	public String[] getArgs(){
+	public String[] getArgs() {
 		return args;
 	}
 
@@ -51,14 +93,14 @@ public final class CommandWrapper{
 	 *
 	 * @return The argument at the specified index
 	 */
-	public String getArg(int index){
-		return args[index];
+	public String getArg(int index) {
+		return index < args.length ? args[index] : null;
 	}
 
 	@Override
-	public String toString(){
+	public String toString() {
 		String as_string = "/" + command_label;
-		for(String arg : args){
+		for (String arg : args) {
 			as_string += " " + arg;
 		}
 		return as_string;

@@ -27,6 +27,7 @@ public class BukkitCommandRegister {
 		hookComands();
 	}
 
+	@SuppressWarnings("unchecked")
 	private void hookComands() {
 		try {
 			SimplePluginManager plugin_manager = (SimplePluginManager)short_commands.getServer().getPluginManager();

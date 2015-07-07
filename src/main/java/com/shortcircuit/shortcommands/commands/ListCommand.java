@@ -18,38 +18,38 @@ import org.bukkit.ChatColor;
 /**
  * @author ShortCircuit908
  */
-public class StatusCommand extends ShortCommand{
+public class ListCommand extends ShortCommand {
 	private ShortCommandHandler<ShortCommand> command_handler;
 
-	public StatusCommand(ShortCommands owning_plugin){
+	public ListCommand(ShortCommands owning_plugin) {
 		super(owning_plugin);
 		this.command_handler = owning_plugin.getCommandHandler();
 	}
 
 	@Override
-	public CommandType getCommandType(){
+	public CommandType getCommandType() {
 		return CommandType.CONSOLE;
 	}
 
 	@Override
-	public String[] getCommandNames(){
+	public String[] getCommandNames() {
 		return new String[]{"cmd-list"};
 	}
 
 	@Override
-	public String getPermissions(){
+	public String getPermissions() {
 		return "*";
 	}
 
 	@Override
-	public String[] getHelp(){
+	public String[] getHelp() {
 		return new String[]{
 				ChatColor.AQUA + "Display a list of registered ShortCommands",
 				ChatColor.AQUA + "/${command} [pluginName]"};
 	}
 
 	@Override
-	public boolean canBeDisabled(){
+	public boolean canBeDisabled() {
 		return false;
 	}
 
@@ -57,14 +57,14 @@ public class StatusCommand extends ShortCommand{
 	public String[] exec(CommandWrapper command)
 			throws TooFewArgumentsException, TooManyArgumentsException,
 			InvalidArgumentException, NoPermissionException,
-			PlayerOnlyException, ConsoleOnlyException, BlockOnlyException{
+			PlayerOnlyException, ConsoleOnlyException, BlockOnlyException {
 		String plugin_name = "";
-		if(command.getArgs().length > 0){
+		if (command.getArgs().length > 0) {
 			plugin_name = command.getArg(0).toLowerCase();
 		}
 		String message = "";
-		for(ShortCommand short_command : command_handler.getCommands()){
-			if(short_command.getUniqueName().split(":")[0].toLowerCase().contains(plugin_name)){
+		for (ShortCommand short_command : command_handler.getCommands()) {
+			if (short_command.getUniqueName().split(":")[0].toLowerCase().contains(plugin_name)) {
 				message += ChatColor.RESET + ", " + (short_command.isEnabled() ? ChatColor.GREEN : ChatColor.RED)
 						+ short_command.getUniqueName();
 			}

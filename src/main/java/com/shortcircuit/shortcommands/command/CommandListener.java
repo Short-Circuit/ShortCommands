@@ -21,6 +21,7 @@ import org.bukkit.event.server.ServerCommandEvent;
  *
  * @author ShortCircuit908
  */
+@SuppressWarnings("unused")
 public final class CommandListener implements Listener {
 	private final ShortCommandHandler<ShortCommand> command_handler;
 	private final BukkitCommandRegister command_register;
@@ -38,7 +39,7 @@ public final class CommandListener implements Listener {
 		}
 		String command = event.getMessage().replaceFirst("/", "");
 		boolean success = command_handler.exec(new CommandWrapper(event.getPlayer(),
-				command.split(" ")[0], (String[]) ArrayUtils.remove(command.split(" "), 0)));
+				command.split(" ")[0], ArrayUtils.remove(command.split(" "), 0)));
 		if (success) {
 			event.setMessage("/cmd-echo");
 		}
@@ -51,7 +52,7 @@ public final class CommandListener implements Listener {
 			return;
 		}
 		boolean success = command_handler.exec(new CommandWrapper(event.getSender(),
-				event.getCommand().split(" ")[0], (String[]) ArrayUtils.remove(event.getCommand().split(" "), 0)));
+				event.getCommand().split(" ")[0], ArrayUtils.remove(event.getCommand().split(" "), 0)));
 		if (success) {
 			event.setCommand("cmd-echo");
 		}

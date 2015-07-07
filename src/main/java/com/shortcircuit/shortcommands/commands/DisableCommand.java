@@ -19,31 +19,31 @@ import org.bukkit.ChatColor;
 /**
  * @author ShortCircuit908
  */
-public class DisableCommand extends ShortCommand{
+public class DisableCommand extends ShortCommand {
 	private ShortCommandHandler<ShortCommand> command_handler;
 
-	public DisableCommand(ShortCommands owning_plugin){
+	public DisableCommand(ShortCommands owning_plugin) {
 		super(owning_plugin);
 		this.command_handler = owning_plugin.getCommandHandler();
 	}
 
 	@Override
-	public CommandType getCommandType(){
+	public CommandType getCommandType() {
 		return CommandType.CONSOLE;
 	}
 
 	@Override
-	public String[] getCommandNames(){
+	public String[] getCommandNames() {
 		return new String[]{"cmd-disable"};
 	}
 
 	@Override
-	public String getPermissions(){
+	public String getPermissions() {
 		return "*";
 	}
 
 	@Override
-	public String[] getHelp(){
+	public String[] getHelp() {
 		return new String[]{ChatColor.AQUA + "Disable a ShortCommand",
 				ChatColor.AQUA + "Enter commands to be disabled in a comma-separated list",
 				ChatColor.AQUA + "/${command} <commands...>",
@@ -51,7 +51,7 @@ public class DisableCommand extends ShortCommand{
 	}
 
 	@Override
-	public boolean canBeDisabled(){
+	public boolean canBeDisabled() {
 		return false;
 	}
 
@@ -59,28 +59,29 @@ public class DisableCommand extends ShortCommand{
 	public String[] exec(CommandWrapper command)
 			throws TooFewArgumentsException, TooManyArgumentsException,
 			InvalidArgumentException, NoPermissionException,
-			PlayerOnlyException, ConsoleOnlyException, BlockOnlyException{
-		if(command.getArgs().length < 1){
+			PlayerOnlyException, ConsoleOnlyException, BlockOnlyException {
+		if (command.getArgs().length < 1) {
 			throw new TooFewArgumentsException(command.getCommandLabel());
 		}
-		if(command.getArgs().length > 1){
+		if (command.getArgs().length > 1) {
 			throw new TooManyArgumentsException(command.getCommandLabel());
 		}
 		String[] commands = command.getArg(0).split(",");
-		for(String command_name : commands){
-			if(command_handler.hasCommand(command_name)){
+		for (String command_name : commands) {
+			if (command_handler.hasCommand(command_name)) {
 				ShortCommand short_command = command_handler.getCommand(command_name);
-				try{
+				try {
 					command_handler.disableCommand(short_command);
+					assert short_command != null;
 					command.getSender().sendMessage(ChatColor.AQUA + "[ShortCommands] Disabled command: "
 							+ short_command.getUniqueName());
 				}
-				catch(PersistentCommandException e){
+				catch (PersistentCommandException e) {
 					command.getSender().sendMessage(ChatColor.RED + "[ShortCommands] Could not disable command: "
 							+ short_command.getUniqueName());
 				}
 			}
-			else{
+			else {
 				command.getSender().sendMessage(ChatColor.RED + "[ShortCommands] Could not find command "
 						+ "with name: " + command_name);
 			}

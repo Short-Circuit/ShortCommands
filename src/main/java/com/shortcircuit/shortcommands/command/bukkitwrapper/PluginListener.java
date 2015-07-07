@@ -1,8 +1,6 @@
 package com.shortcircuit.shortcommands.command.bukkitwrapper;
 
 import com.shortcircuit.shortcommands.ShortCommands;
-import com.shortcircuit.shortcommands.command.ShortCommand;
-import com.shortcircuit.shortcommands.command.ShortCommandHandler;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -14,14 +12,13 @@ import java.util.Set;
 /**
  * @author ShortCircuit908
  */
+@SuppressWarnings("unused")
 public class PluginListener implements Listener {
-	private final ShortCommandHandler<ShortCommand> command_handler;
 	private final BukkitCommandRegister command_register;
 	private final Set<String> wrapped_plugins;
 
 	public PluginListener(ShortCommands plugin, Set<String> wrapped_plugins) {
 		this.wrapped_plugins = wrapped_plugins;
-		command_handler = plugin.getCommandHandler();
 		command_register = plugin.getCommandRegister();
 	}
 

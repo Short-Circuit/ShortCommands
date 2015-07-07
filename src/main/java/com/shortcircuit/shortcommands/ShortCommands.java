@@ -5,12 +5,11 @@ import com.shortcircuit.shortcommands.command.CommandWrapper;
 import com.shortcircuit.shortcommands.command.ShortCommand;
 import com.shortcircuit.shortcommands.command.ShortCommandHandler;
 import com.shortcircuit.shortcommands.command.bukkitwrapper.BukkitCommandRegister;
-import com.shortcircuit.shortcommands.command.bukkitwrapper.PluginListener;
 import com.shortcircuit.shortcommands.command.bukkitwrapper.WrapperTask;
 import com.shortcircuit.shortcommands.commands.DisableCommand;
 import com.shortcircuit.shortcommands.commands.EnableCommand;
 import com.shortcircuit.shortcommands.commands.InfoCommand;
-import com.shortcircuit.shortcommands.commands.StatusCommand;
+import com.shortcircuit.shortcommands.commands.ListCommand;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.bukkit.Bukkit;
@@ -27,7 +26,7 @@ import java.util.Set;
  * @author ShortCircuit908
  */
 public final class ShortCommands extends JavaPlugin {
-	private ShortCommandHandler<ShortCommand> command_handler = new ShortCommandHandler<>();
+	private final ShortCommandHandler<ShortCommand> command_handler = new ShortCommandHandler<>();
 	private BukkitCommandRegister command_register;
 	private JSONConfig config;
 	private boolean save_disabled_commands = true;
@@ -43,7 +42,7 @@ public final class ShortCommands extends JavaPlugin {
 				new DisableCommand(this),
 				new EnableCommand(this),
 				new InfoCommand(this),
-				new StatusCommand(this));
+				new ListCommand(this));
 		if (unregistered_commands.size() > 0) {
 			getLogger().severe("Could not register core commands");
 			getLogger().severe("Disabling...");
@@ -73,7 +72,7 @@ public final class ShortCommands extends JavaPlugin {
 				message += " " + arg;
 			}
 			if (!message.trim().isEmpty()) {
-				Bukkit.getConsoleSender().sendMessage(message.trim());
+				getServer().getConsoleSender().sendMessage(message.trim());
 			}
 			return true;
 		}

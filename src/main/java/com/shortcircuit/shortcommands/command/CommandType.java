@@ -53,12 +53,8 @@ public enum CommandType{
 
 	private final ChatColor color;
 
-	private CommandType(ChatColor color){
+	CommandType(ChatColor color){
 		this.color = color;
-	}
-
-	public static ChatColor getColor(CommandType type){
-		return type.color;
 	}
 
 	public String toString(){

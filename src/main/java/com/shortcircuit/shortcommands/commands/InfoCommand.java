@@ -66,7 +66,7 @@ public class InfoCommand extends ShortCommand {
 		}
 		if (command_handler.hasCommand(command.getArg(0))) {
 			ShortCommand short_command = command_handler.getCommand(command.getArg(0));
-
+			assert short_command != null;
 			return new String[]{ChatColor.GRAY + "Information for " + ChatColor.WHITE
 					+ short_command.getUniqueName() + ChatColor.GRAY + ":",
 					ChatColor.GOLD + "User type: " + ChatColor.WHITE + short_command.getCommandType(),
