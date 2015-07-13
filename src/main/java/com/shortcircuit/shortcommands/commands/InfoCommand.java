@@ -62,7 +62,7 @@ public class InfoCommand extends ShortCommand {
 			InvalidArgumentException, NoPermissionException,
 			PlayerOnlyException, ConsoleOnlyException, BlockOnlyException {
 		if (command.getArgs().length < 1) {
-			throw new TooFewArgumentsException(command.getCommandLabel());
+			throw new TooFewArgumentsException();
 		}
 		if (command_handler.hasCommand(command.getArg(0))) {
 			ShortCommand short_command = command_handler.getCommand(command.getArg(0));
@@ -83,6 +83,6 @@ public class InfoCommand extends ShortCommand {
 	}
 
 	private String boolToString(boolean bool) {
-		return bool ? ChatColor.GREEN + "" + bool : ChatColor.RED + "" + bool;
+		return bool ? ChatColor.GREEN + "true" : ChatColor.RED + "false";
 	}
 }

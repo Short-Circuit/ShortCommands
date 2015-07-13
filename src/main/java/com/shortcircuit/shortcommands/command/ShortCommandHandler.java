@@ -272,8 +272,10 @@ public final class ShortCommandHandler<T extends ShortCommand> {
 				}
 			}
 		}
-		catch (TooFewArgumentsException | TooManyArgumentsException | InvalidArgumentException
-				| NoPermissionException | PlayerOnlyException | ConsoleOnlyException | BlockOnlyException e) {
+		catch (TooFewArgumentsException | TooManyArgumentsException | InvalidArgumentException e) {
+			command.getSender().sendMessage(ChatColor.RED + e.getMessage() + " Try /" + command.getCommandLabel() + " help");
+		}
+		catch(PlayerOnlyException | BlockOnlyException | ConsoleOnlyException | NoPermissionException e){
 			command.getSender().sendMessage(ChatColor.RED + e.getMessage());
 		}
 		catch (Exception e) {

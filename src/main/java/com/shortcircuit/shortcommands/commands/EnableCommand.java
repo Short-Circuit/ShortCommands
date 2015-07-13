@@ -61,10 +61,10 @@ public class EnableCommand extends ShortCommand {
 			InvalidArgumentException, NoPermissionException,
 			PlayerOnlyException, ConsoleOnlyException, BlockOnlyException {
 		if (command.getArgs().length < 1) {
-			throw new TooFewArgumentsException(command.getCommandLabel());
+			throw new TooFewArgumentsException();
 		}
 		if (command.getArgs().length > 1) {
-			throw new TooManyArgumentsException(command.getCommandLabel());
+			throw new TooManyArgumentsException();
 		}
 		String[] commands = command.getArg(0).split(",");
 		for (String command_name : commands) {

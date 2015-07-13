@@ -8,6 +8,10 @@ public class NoPermissionException extends Exception {
 	private static final long serialVersionUID = -2816353388681126986L;
 	private final String required_permissions;
 
+	public NoPermissionException(){
+		this(null);
+	}
+
 	public NoPermissionException(String required_permissions) {
 		super("I'm sorry, but you do not have permission to perform this command. Please contact " +
 				"the server administrators if you believe this is in error.");
