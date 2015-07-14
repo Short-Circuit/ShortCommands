@@ -22,7 +22,7 @@ public class ListCommand extends ShortCommand {
 	private ShortCommandHandler<ShortCommand> command_handler;
 
 	public ListCommand(ShortCommands owning_plugin) {
-		super(owning_plugin);
+		super("cmd-list", owning_plugin);
 		this.command_handler = owning_plugin.getCommandHandler();
 	}
 

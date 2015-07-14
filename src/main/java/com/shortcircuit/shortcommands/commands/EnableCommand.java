@@ -22,7 +22,7 @@ public class EnableCommand extends ShortCommand {
 	private ShortCommandHandler<ShortCommand> command_handler;
 
 	public EnableCommand(ShortCommands owning_plugin) {
-		super(owning_plugin);
+		super("cmd-enable", owning_plugin);
 		this.command_handler = owning_plugin.getCommandHandler();
 	}
 

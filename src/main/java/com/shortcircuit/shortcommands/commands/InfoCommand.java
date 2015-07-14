@@ -23,7 +23,7 @@ public class InfoCommand extends ShortCommand {
 	private ShortCommandHandler<ShortCommand> command_handler;
 
 	public InfoCommand(ShortCommands owning_plugin) {
-		super(owning_plugin);
+		super("cmd-info", owning_plugin);
 		this.command_handler = owning_plugin.getCommandHandler();
 	}
 

@@ -10,7 +10,7 @@ import com.shortcircuit.shortcommands.commands.DisableCommand;
 import com.shortcircuit.shortcommands.commands.EnableCommand;
 import com.shortcircuit.shortcommands.commands.InfoCommand;
 import com.shortcircuit.shortcommands.commands.ListCommand;
-
+import net.gravitydevelopment.updater.Updater;
 import org.apache.commons.lang3.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.BlockCommandSender;
@@ -26,7 +26,7 @@ import java.util.Set;
  * @author ShortCircuit908
  */
 public final class ShortCommands extends JavaPlugin {
-	private final ShortCommandHandler<ShortCommand> command_handler = new ShortCommandHandler<>();
+	private final ShortCommandHandler<ShortCommand> command_handler = new ShortCommandHandler<>(ShortCommand.class);
 	private BukkitCommandRegister command_register;
 	private JSONConfig config;
 	private boolean save_disabled_commands = true;
@@ -52,6 +52,12 @@ public final class ShortCommands extends JavaPlugin {
 		command_handler.registerHelpTopics(this);
 		getLogger().info("ShortCommands enabled");
 		getServer().getScheduler().scheduleSyncDelayedTask(this, new WrapperTask(this), 0);
+		getServer().getScheduler().scheduleAsyncDelayedTask(this, new Runnable() {
+			@Override
+			public void run() {
+				Updater updater = new Updater(ShortCommands.getInstance(), 86617, ShortCommands.getInstance().getFile(), Updater.UpdateType.NO_DOWNLOAD, true);
+			}
+		}, 0L);
 	}
 
 	public void onDisable() {

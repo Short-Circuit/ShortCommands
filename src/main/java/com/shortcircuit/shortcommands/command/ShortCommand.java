@@ -1,21 +1,36 @@
 package com.shortcircuit.shortcommands.command;
 
 import com.shortcircuit.shortcommands.exceptions.TooFewArgumentsException;
+import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginIdentifiableCommand;
 import org.bukkit.plugin.Plugin;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author ShortCircuit908
  */
-public abstract class ShortCommand{
+public abstract class ShortCommand extends Command implements PluginIdentifiableCommand {
 	private final String owning_plugin;
 	private boolean enabled = true;
+	private final ArrayList<String> aliases = new ArrayList<>();
 
-	public ShortCommand(String owning_plugin) {
+	public ShortCommand(String name, String owning_plugin) {
+		super(name);
 		this.owning_plugin = owning_plugin;
 	}
 
-	public ShortCommand(Plugin owning_plugin) {
-		this.owning_plugin = owning_plugin.getName();
+	public ShortCommand(String name, Plugin owning_plugin) {
+		this(name, owning_plugin.getName());
+	}
+
+	protected void registerAliases() {
+		for (String alias : getCommandNames()) {
+			aliases.add(alias);
+		}
 	}
 
 	/**
@@ -25,6 +40,23 @@ public abstract class ShortCommand{
 	 */
 	public String getOwningPlugin() {
 		return owning_plugin;
+	}
+
+	@Override
+	public Plugin getPlugin() {
+		return Bukkit.getServer().getPluginManager().getPlugin(owning_plugin);
+	}
+
+	@Override
+	public List<String> getAliases() {
+		return aliases;
+	}
+
+	@Override
+	public Command setAliases(List<String> aliases) {
+		this.aliases.clear();
+		this.aliases.addAll(aliases);
+		return this;
 	}
 
 	/**
@@ -104,6 +136,10 @@ public abstract class ShortCommand{
 		return owning_plugin + ":" + this.getClass().getSimpleName();
 	}
 
+	public void tabComplete(final CommandTabCompleteEvent event) {
+
+	}
+
 	/**
 	 * Runs the command
 	 * <p>
@@ -119,4 +155,14 @@ public abstract class ShortCommand{
 	 *                                   BlockOnlyException
 	 */
 	public abstract String[] exec(CommandWrapper command) throws Exception;
+
+	@Override
+	public boolean execute(CommandSender sender, String command_label, String[] args) {
+		return true;
+	}
+
+	@Override
+	public List<String> tabComplete(CommandSender sender, String alias, String[] args)  throws IllegalArgumentException {
+		return super.tabComplete(sender, alias, args);
+	}
 }

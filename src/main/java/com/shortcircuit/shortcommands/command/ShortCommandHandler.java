@@ -7,12 +7,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.block.CommandBlock;
 import org.bukkit.command.BlockCommandSender;
+import org.bukkit.command.CommandMap;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.reflections.Reflections;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -23,13 +27,13 @@ import java.util.Set;
  * @author ShortCircuit908
  */
 @SuppressWarnings("unused")
-public final class ShortCommandHandler<T extends ShortCommand> {
+public final class ShortCommandHandler<T extends ShortCommand> implements Listener {
 	private final Set<T> command_list = new HashSet<>();
 	private final Set<String> disabled_commands = new HashSet<>();
-	private final Class<T> command_type = (Class<T>)ShortCommand.class;
+	private final Class<T> command_type;
 
-	public ShortCommandHandler(){
-
+	public ShortCommandHandler(Class<T> command_type) {
+		this.command_type = command_type;
 	}
 
 	/**
@@ -38,6 +42,7 @@ public final class ShortCommandHandler<T extends ShortCommand> {
 	 * @param command The command to register
 	 */
 	public void registerCommand(T command) throws CommandExistsException {
+		command.registerAliases();
 		String command_name = command.getUniqueName();
 		List<String> conflicting_commands = new ArrayList<>();
 		for (String name : command.getCommandNames()) {
@@ -65,6 +70,13 @@ public final class ShortCommandHandler<T extends ShortCommand> {
 			throw new CommandExistsException(conflicting_commands.toArray(new String[]{}));
 		}
 		command_list.add(command);
+		CommandMap map = getBukkitCommandMap();
+		if (map != null) {
+			map.register("ShortCommands", command);
+		}
+		else {
+			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[ShortCommands] Could not access Bukkit command map. Tab completion will not work.");
+		}
 		if (disabled_commands.contains(command_name) && command.canBeDisabled()) {
 			command.setEnabled(false);
 		}
@@ -145,14 +157,27 @@ public final class ShortCommandHandler<T extends ShortCommand> {
 				try {
 					Constructor<? extends T> constructor = command_class.getDeclaredConstructor(plugin.getClass());
 					command = constructor.newInstance(plugin);
+
 				}
 				catch (NoSuchMethodException e) {
-					Constructor<? extends T> constructor = command_class.getDeclaredConstructor();
-					command = constructor.newInstance();
+					try {
+						Constructor<? extends T> constructor = command_class.getDeclaredConstructor(Plugin.class);
+						command = constructor.newInstance(plugin);
+					}
+					catch (NoSuchMethodException ex) {
+						try {
+							Constructor<? extends T> constructor = command_class.getDeclaredConstructor(String.class);
+							command = constructor.newInstance(plugin.getName());
+						}
+						catch (NoSuchMethodException exc){
+							Constructor<? extends T> constructor = command_class.getDeclaredConstructor();
+							command = constructor.newInstance();
+						}
+					}
 				}
 				registerCommand(command);
 			}
-			catch(ReflectiveOperationException e){
+			catch (ReflectiveOperationException e) {
 				e.printStackTrace();
 			}
 			catch (CommandExistsException e) {
@@ -275,7 +300,7 @@ public final class ShortCommandHandler<T extends ShortCommand> {
 		catch (TooFewArgumentsException | TooManyArgumentsException | InvalidArgumentException e) {
 			command.getSender().sendMessage(ChatColor.RED + e.getMessage() + " Try /" + command.getCommandLabel() + " help");
 		}
-		catch(PlayerOnlyException | BlockOnlyException | ConsoleOnlyException | NoPermissionException e){
+		catch (PlayerOnlyException | BlockOnlyException | ConsoleOnlyException | NoPermissionException e) {
 			command.getSender().sendMessage(ChatColor.RED + e.getMessage());
 		}
 		catch (Exception e) {
@@ -513,5 +538,25 @@ public final class ShortCommandHandler<T extends ShortCommand> {
 		}
 		Bukkit.getServer().getHelpMap().addTopic(new ShortHelpTopic(plugin.getName(),
 				(Set<ShortCommand>) commands));
+	}
+
+	@EventHandler
+	public void tabComplete(final CommandTabCompleteEvent event) {
+		System.out.println("TAB COMPLEEEEETE");
+		ShortCommand command = getCommand(event.getCommandLabel());
+		if (command != null) {
+			command.tabComplete(event);
+		}
+	}
+
+	public CommandMap getBukkitCommandMap() {
+		try {
+			Field field = Bukkit.getServer().getPluginManager().getClass().getDeclaredField("commandMap");
+			field.setAccessible(true);
+			return (CommandMap) field.get(Bukkit.getServer().getPluginManager());
+		}
+		catch (ReflectiveOperationException e) {
+			return null;
+		}
 	}
 }

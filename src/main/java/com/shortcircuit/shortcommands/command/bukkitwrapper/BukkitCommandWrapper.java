@@ -4,7 +4,6 @@ import com.shortcircuit.shortcommands.ShortCommands;
 import com.shortcircuit.shortcommands.command.CommandType;
 import com.shortcircuit.shortcommands.command.CommandWrapper;
 import com.shortcircuit.shortcommands.command.ShortCommand;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 
@@ -20,7 +19,7 @@ public class BukkitCommandWrapper extends ShortCommand {
 	private final String[] help;
 
 	public BukkitCommandWrapper(Command command) {
-		super(ShortCommands.getInstance());
+		super(command.getName(), ShortCommands.getInstance());
 		this.command = command;
 		List<String> aliases = new ArrayList<>();
 		for(String alias : command.getAliases()) {

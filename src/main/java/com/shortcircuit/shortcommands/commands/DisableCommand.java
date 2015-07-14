@@ -23,7 +23,7 @@ public class DisableCommand extends ShortCommand {
 	private ShortCommandHandler<ShortCommand> command_handler;
 
 	public DisableCommand(ShortCommands owning_plugin) {
-		super(owning_plugin);
+		super("cmd-disable", owning_plugin);
 		this.command_handler = owning_plugin.getCommandHandler();
 	}
 
