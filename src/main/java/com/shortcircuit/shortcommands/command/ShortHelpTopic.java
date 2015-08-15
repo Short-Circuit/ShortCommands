@@ -1,6 +1,5 @@
 package com.shortcircuit.shortcommands.command;
 
-import org.apache.commons.lang3.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.help.HelpTopic;
@@ -23,7 +22,7 @@ public final class ShortHelpTopic extends HelpTopic {
 			String truncated = "\n" + ChatColor.GOLD + "/" + command.getCommandNames()[0] + ": " + ChatColor.WHITE
 					+ (command.getHelp().length == 0 ? "" : ChatColor.stripColor(command.getHelp()[0]));
 			if (truncated.length() > 55) {
-				truncated = StringUtils.abbreviate(truncated, 55);
+				truncated = truncated.substring(0, 53) + "...";
 			}
 			fullText += truncated;
 		}
@@ -32,7 +31,7 @@ public final class ShortHelpTopic extends HelpTopic {
 	protected ShortHelpTopic(String command_name, ShortCommand command) {
 		amendedPermission = command.getPermissions();
 		name = "/" + command_name;
-		if(command.getHelp().length != 0){
+		if (command.getHelp().length != 0) {
 			shortText = ChatColor.AQUA + command.getHelp()[0];
 		}
 		fullText = "";

@@ -11,7 +11,6 @@ import com.shortcircuit.shortcommands.commands.EnableCommand;
 import com.shortcircuit.shortcommands.commands.InfoCommand;
 import com.shortcircuit.shortcommands.commands.ListCommand;
 import net.gravitydevelopment.updater.Updater;
-import org.apache.commons.lang3.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.Command;
@@ -88,7 +87,12 @@ public final class ShortCommands extends JavaPlugin {
 				message += " " + arg;
 			}
 			if (!message.trim().isEmpty()) {
-				command_handler.exec(new CommandWrapper(command_sender, args[0], ArrayUtils.remove(args, 0)));
+				String[] new_args = new String[1];
+				if (args.length > 1) {
+					new_args = new String[args.length - 1];
+					System.arraycopy(args, 1, new_args, 1, new_args.length);
+				}
+				command_handler.exec(new CommandWrapper(command_sender, args[0], new_args));
 			}
 			return true;
 		}
@@ -116,7 +120,7 @@ public final class ShortCommands extends JavaPlugin {
 
 	/**
 	 * Sets whether or not the disabled command list should be saved
-	 * <p>
+	 * <p/>
 	 * This method is strictly for internal command handling, and should not be used under any
 	 * circumstances
 	 *

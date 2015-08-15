@@ -64,9 +64,9 @@ public final class ShortCommandHandler<T extends ShortCommand> implements Listen
 			}
 			message = message.replaceFirst(", ", "");
 			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[ShortCommands] Unable to register "
-			                                      + "command: " + command_name);
+					+ "command: " + command_name);
 			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[ShortCommands] The command conflicts "
-			                                      + "with the following commands: " + message);
+					+ "with the following commands: " + message);
 			throw new CommandExistsException(conflicting_commands.toArray(new String[]{}));
 		}
 		command_list.add(command);
@@ -81,7 +81,7 @@ public final class ShortCommandHandler<T extends ShortCommand> implements Listen
 			command.setEnabled(false);
 		}
 		Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + "[ShortCommands] Registered command: "
-		                                      + command_name);
+				+ command_name);
 	}
 
 	/**
@@ -102,7 +102,7 @@ public final class ShortCommandHandler<T extends ShortCommand> implements Listen
 
 	/**
 	 * Attempts to register a collection of ShortCommands
-	 * <p>
+	 * <p/>
 	 * The command manager will attempt to register each command individually. If it cannot be registered,
 	 * the command is added to a set of other ShortCommands that could not be registered, which is then
 	 * returned.
@@ -126,7 +126,7 @@ public final class ShortCommandHandler<T extends ShortCommand> implements Listen
 
 	/**
 	 * Attempts to register a collection of ShortCommands
-	 * <p>
+	 * <p/>
 	 * The command manager will attempt to register each command individually. If it cannot be registered,
 	 * the command is added to a set of other ShortCommands that could not be registered, which is then
 	 * returned.
@@ -169,7 +169,7 @@ public final class ShortCommandHandler<T extends ShortCommand> implements Listen
 							Constructor<? extends T> constructor = command_class.getDeclaredConstructor(String.class);
 							command = constructor.newInstance(plugin.getName());
 						}
-						catch (NoSuchMethodException exc){
+						catch (NoSuchMethodException exc) {
 							Constructor<? extends T> constructor = command_class.getDeclaredConstructor();
 							command = constructor.newInstance();
 						}
@@ -231,11 +231,11 @@ public final class ShortCommandHandler<T extends ShortCommand> implements Listen
 	/**
 	 * Attempts to find and execute a {@link com.shortcircuit.shortcommands.command.ShortCommand ShortCommand}
 	 * based on the provided {@link com.shortcircuit.shortcommands.command.CommandWrapper CommandWrapper}
-	 * <p>
+	 * <p/>
 	 * If a command with a matching name is found, the command is executed
 	 * and the method returns true. If the command is not found, the method
 	 * returns false.
-	 * <p>
+	 * <p/>
 	 * This method is strictly for internal command handling, and should not be used under any
 	 * circumstances
 	 *
@@ -257,30 +257,30 @@ public final class ShortCommandHandler<T extends ShortCommand> implements Listen
 							CommandBlock command_block = (CommandBlock) ((BlockCommandSender)
 									command.getSender()).getBlock().getState();
 							name = "CommandBlock at " + command_block.getX() + "," + command_block.getY()
-							       + "," + command_block.getZ();
+									+ "," + command_block.getZ();
 						}
 						Bukkit.getLogger().info(name + " issued ShortCommand: "
-						                        + command);
+								+ command);
 						success = true;
 						if (command_check.getCommandType().equals(CommandType.CONSOLE)
-						    && !(command.getSender() instanceof ConsoleCommandSender)) {
+								&& !(command.getSender() instanceof ConsoleCommandSender)) {
 							throw new ConsoleOnlyException();
 						}
 						if (command_check.getCommandType().equals(CommandType.PLAYER)
-						    && !(command.getSender() instanceof Player)) {
+								&& !(command.getSender() instanceof Player)) {
 							throw new PlayerOnlyException();
 						}
 						if (command_check.getCommandType().equals(CommandType.BLOCK)
-						    && !(command.getSender() instanceof BlockCommandSender)) {
+								&& !(command.getSender() instanceof BlockCommandSender)) {
 							throw new BlockOnlyException();
 						}
 
 						if (PermissionComparator.hasWildcardPermission(command.getSender(),
 								command_check.getPermissions())) {
 							if (command.getArgs().length > 0
-							    && command.getArgs()[0].equalsIgnoreCase("help")) {
+									&& command.getArgs()[0].equalsIgnoreCase("help")) {
 								for (String message : command_check.getHelp()) {
-									command.getSender().sendMessage(message.replace("${command}",
+									command.getSender().sendMessage(ChatColor.AQUA + message.replace("${command}",
 											command.getCommandLabel()));
 								}
 								break check_loop;
@@ -320,12 +320,12 @@ public final class ShortCommandHandler<T extends ShortCommand> implements Listen
 		if (command_list.remove(command)) {
 			if (!(command instanceof BukkitCommandWrapper)) {
 				Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + "[ShortCommands] Unregistered command: "
-				                                      + command.getUniqueName());
+						+ command.getUniqueName());
 			}
 			return command;
 		}
 		Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[ShortCommands] Could not unregister command: "
-		                                      + command.getUniqueName());
+				+ command.getUniqueName());
 		return null;
 	}
 
@@ -388,7 +388,7 @@ public final class ShortCommandHandler<T extends ShortCommand> implements Listen
 
 	/**
 	 * Disables a {@link com.shortcircuit.shortcommands.command.ShortCommand ShortCommand}
-	 * <p>
+	 * <p/>
 	 * When a command is disabled, any calls to the command will be entirely ignored, and will be passed
 	 * along to Bukkit's default command handling. The command itself is not unregistered, to prevent name
 	 * conflicts should another plugin attempt to register a command with a matching name.
@@ -411,7 +411,7 @@ public final class ShortCommandHandler<T extends ShortCommand> implements Listen
 
 	/**
 	 * Disables a {@link com.shortcircuit.shortcommands.command.ShortCommand ShortCommand}
-	 * <p>
+	 * <p/>
 	 * When a command is disabled, any calls to the command will be entirely ignored, and will be passed
 	 * along to Bukkit's default command handling. The command itself is not unregistered, to prevent name
 	 * conflicts should another plugin attempt to register a command with a matching name.
@@ -432,7 +432,7 @@ public final class ShortCommandHandler<T extends ShortCommand> implements Listen
 
 	/**
 	 * Disables a {@link com.shortcircuit.shortcommands.command.ShortCommand ShortCommand}
-	 * <p>
+	 * <p/>
 	 * When a command is disabled, any calls to the command will be entirely ignored, and will be passed
 	 * along to Bukkit's default command handling. The command itself is not unregistered, to prevent name
 	 * conflicts should another plugin attempt to register a command with a matching name.
@@ -453,7 +453,7 @@ public final class ShortCommandHandler<T extends ShortCommand> implements Listen
 
 	/**
 	 * Enables a {@link com.shortcircuit.shortcommands.command.ShortCommand ShortCommand}
-	 * <p>
+	 * <p/>
 	 * When a command is disabled, any calls to the command will be entirely ignored, and will be passed
 	 * along to Bukkit's default command handling. The command itself is not unregistered, to prevent name
 	 * conflicts should another plugin attempt to register a command with a matching name.
@@ -473,7 +473,7 @@ public final class ShortCommandHandler<T extends ShortCommand> implements Listen
 
 	/**
 	 * Enables a {@link com.shortcircuit.shortcommands.command.ShortCommand ShortCommand}
-	 * <p>
+	 * <p/>
 	 * When a command is disabled, any calls to the command will be entirely ignored, and will be passed
 	 * along to Bukkit's default command handling. The command itself is not unregistered, to prevent name
 	 * conflicts should another plugin attempt to register a command with a matching name.
@@ -491,7 +491,7 @@ public final class ShortCommandHandler<T extends ShortCommand> implements Listen
 
 	/**
 	 * Enables a {@link com.shortcircuit.shortcommands.command.ShortCommand ShortCommand}
-	 * <p>
+	 * <p/>
 	 * When a command is disabled, any calls to the command will be entirely ignored, and will be passed
 	 * along to Bukkit's default command handling. The command itself is not unregistered, to prevent name
 	 * conflicts should another plugin attempt to register a command with a matching name.
@@ -509,7 +509,7 @@ public final class ShortCommandHandler<T extends ShortCommand> implements Listen
 
 	/**
 	 * Adds a command to be disabled when registered
-	 * <p>
+	 * <p/>
 	 * This method is strictly for internal command handling, and should not be used under any
 	 * circumstances
 	 *
@@ -521,7 +521,7 @@ public final class ShortCommandHandler<T extends ShortCommand> implements Listen
 
 	/**
 	 * Registers help topics for a plugin and all its commands
-	 * <p>
+	 * <p/>
 	 * This method should be called in a plugin's onEnable() method only AFTER all commands have been
 	 * registered. Help topics will only be generated for commands that have already been registered at
 	 * the time this method is called.

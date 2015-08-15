@@ -1,19 +1,12 @@
 package com.shortcircuit.shortcommands.commands;
 
+import com.google.common.base.Joiner;
 import com.shortcircuit.shortcommands.ShortCommands;
 import com.shortcircuit.shortcommands.command.CommandType;
 import com.shortcircuit.shortcommands.command.CommandWrapper;
 import com.shortcircuit.shortcommands.command.ShortCommand;
 import com.shortcircuit.shortcommands.command.ShortCommandHandler;
-import com.shortcircuit.shortcommands.exceptions.BlockOnlyException;
-import com.shortcircuit.shortcommands.exceptions.ConsoleOnlyException;
-import com.shortcircuit.shortcommands.exceptions.InvalidArgumentException;
-import com.shortcircuit.shortcommands.exceptions.NoPermissionException;
-import com.shortcircuit.shortcommands.exceptions.PlayerOnlyException;
-import com.shortcircuit.shortcommands.exceptions.TooFewArgumentsException;
-import com.shortcircuit.shortcommands.exceptions.TooManyArgumentsException;
-
-import org.apache.commons.lang3.ArrayUtils;
+import com.shortcircuit.shortcommands.exceptions.*;
 import org.bukkit.ChatColor;
 
 /**
@@ -73,7 +66,7 @@ public class InfoCommand extends ShortCommand {
 					ChatColor.GOLD + "Required permissions: " + ChatColor.WHITE
 							+ short_command.getPermissions(),
 					ChatColor.GOLD + "Aliases: " + ChatColor.WHITE
-							+ ArrayUtils.toString(short_command.getCommandNames()),
+							+ Joiner.on(' ').join(short_command.getCommandNames()),
 					ChatColor.GOLD + "Enabled: " + boolToString(short_command.isEnabled()),
 					ChatColor.GOLD + "Can be disabled: " + boolToString(short_command.canBeDisabled()),
 			};

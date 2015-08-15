@@ -2,8 +2,6 @@ package com.shortcircuit.shortcommands.command;
 
 import com.shortcircuit.shortcommands.ShortCommands;
 import com.shortcircuit.shortcommands.command.bukkitwrapper.BukkitCommandRegister;
-
-import org.apache.commons.lang3.ArrayUtils;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.CommandBlock;
@@ -38,8 +36,13 @@ public final class CommandListener implements Listener {
 			return;
 		}
 		String command = event.getMessage().replaceFirst("/", "");
-		boolean success = command_handler.exec(new CommandWrapper(event.getPlayer(),
-				command.split(" ")[0], ArrayUtils.remove(command.split(" "), 0)));
+		String[] args = command.split(" ");
+		String[] new_args = new String[0];
+		if (args.length > 1) {
+			new_args = new String[args.length - 1];
+			System.arraycopy(args, 1, new_args, 0, new_args.length);
+		}
+		boolean success = command_handler.exec(new CommandWrapper(event.getPlayer(), command.split(" ")[0], new_args));
 		if (success) {
 			event.setMessage("/cmd-echo");
 		}
@@ -51,8 +54,14 @@ public final class CommandListener implements Listener {
 				|| event.getCommand().split(" ")[0].equalsIgnoreCase("reload")) {
 			return;
 		}
-		boolean success = command_handler.exec(new CommandWrapper(event.getSender(),
-				event.getCommand().split(" ")[0], ArrayUtils.remove(event.getCommand().split(" "), 0)));
+		String command = event.getCommand();
+		String[] args = command.split(" ");
+		String[] new_args = new String[0];
+		if (args.length > 1) {
+			new_args = new String[args.length - 1];
+			System.arraycopy(args, 1, new_args, 0, new_args.length);
+		}
+		boolean success = command_handler.exec(new CommandWrapper(event.getSender(), command.split(" ")[0], new_args));
 		if (success) {
 			event.setCommand("cmd-echo");
 		}
