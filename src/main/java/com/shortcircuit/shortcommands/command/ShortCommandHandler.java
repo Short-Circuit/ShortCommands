@@ -304,7 +304,8 @@ public final class ShortCommandHandler<T extends ShortCommand> implements Listen
 			command.getSender().sendMessage(ChatColor.RED + e.getMessage());
 		}
 		catch (Exception e) {
-			command.getSender().sendMessage(ChatColor.RED + "An internal error has occurred\n" + ChatColor.RED + "Please check the console");
+			command.getSender().sendMessage(ChatColor.RED + "An internal error has occurred: " + e.getClass().getCanonicalName()
+					+ ": " + e.getMessage() + "\n" + ChatColor.RED + "Please check the console");
 			e.printStackTrace();
 		}
 		return success;

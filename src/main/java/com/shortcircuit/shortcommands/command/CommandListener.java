@@ -31,7 +31,7 @@ public final class CommandListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onCommand(final PlayerCommandPreprocessEvent event) {
-		if (event.isCancelled() || event.getMessage().split(" ")[0].equalsIgnoreCase("/stop")
+		if (event.getMessage().split(" ")[0].equalsIgnoreCase("/stop")
 				|| event.getMessage().split(" ")[0].equalsIgnoreCase("/reload")) {
 			return;
 		}
